@@ -1,14 +1,11 @@
-//todo.
-//individual sprite positioning
-// $sprites-retina-spotify-position: 95%   -- this won't work for some reason.
 
-//   example sass/css usage
+//  example sass/css usage
 
-// .spotify {
+// #page span.spotify {
 //   @include icon (spotify, 10px, 3px, retina);
-//   width: 70%;
-//   height: 84px;
-//   display: block;
+//   width: 40px;
+//   height: 40px;
+//   display: inline-block;
 // }
 
 //       or with a retina version and it's offsets ~
@@ -17,22 +14,35 @@
 //       or with retina version ignored and not used ~
 //   @include icon (spotify, 2px, 3px);
 
+//       or with retina version and horizontal positioning 
+//       ~ in conjuction with individual positioning variables.
+//   @include icon (spotify, 90%, 3px, retina);
+
 
 
 //  true/false   set to true to see retina images on standard screens
 //  puts a red border around the page edge.
-$retina-debug-mode: false;
+$retina-debug-mode: true;
 
 //default icon sprite spacing
-$sprite-padding: 40px;
+$sprite-padding: 30px;
 
-$sprites: sprite-map("sprites/*.png", $spacing: $sprite-padding, $sprites-spotify-spacing: 400px);
-$sprites-retina: sprite-map("sprites-retina/*.png", $spacing: $sprite-padding * 2);
+$sprites: sprite-map("sprites/*.png", $spacing: $sprite-padding, 
+  $sprites-spotify-spacing: 100px,
+  $sprites-spotify-position: 100%,
+  $sprites-pinterest-spacing: 200px); // the closing tag must be on this last line for it to work.
+
+//the individual retina spacings - positions in px must be doubled.
+$sprites-retina: sprite-map("sprites-retina/*.png", $spacing: $sprite-padding * 2,
+  $sprites-retina-spotify-spacing: 200px,
+  $sprites-retina-spotify-position: 100%,
+  $sprites-retina-pinterest-spacing: 400px); // the closing tag must be on this last line for it to work.
 
 
 
 
 
+//mixin starts
 
 %bg-normal {
   background-image: sprite-url($sprites);
@@ -41,7 +51,7 @@ $sprites-retina: sprite-map("sprites-retina/*.png", $spacing: $sprite-padding * 
 
 @mixin icon($name, $offset-x: 0, $offset-y:0, $retina-switch: false, $retina-offset-x: 0, $retina-offset-y: 0 ) {
   @if $retina-debug-mode  == false {
-    background-color: red;
+    // background-color: red;
 
     @extend %bg-normal;
     background-position: sprite-position($sprites, $name, $offset-x, $offset-y);
@@ -57,37 +67,73 @@ $sprites-retina: sprite-map("sprites-retina/*.png", $spacing: $sprite-padding * 
       // @debug "Roffset x =" $retina-offset-x;
       // @debug "Roffset y =" $retina-offset-y;
 
-      @if $retina-switch == retina {
-        background-color: darkgreen;
+      $retina-unit: unit($retina-offset-x);
 
+
+      @if $retina-switch == retina {
+        // background-color: pink;
         background-image: sprite-url($sprites-retina);
-        $hor-pos: floor(nth(sprite-position($sprites-retina, $name), 1) / 2);
-        $vert-pos: floor(nth(sprite-position($sprites-retina, $name), 2) / 2);
-        background-position: $hor-pos+$retina-offset-x $vert-pos+$retina-offset-y;
-        @include background-size(round(image-width(sprite-path($sprites-retina)) / 2) auto);
+
+        @if $retina-unit == "%" {  
+          // @debug percentage widths;
+          // @debug $retina-offset-x;
+
+          $vert-pos: floor(nth(sprite-position($sprites-retina, $name), 2) / 2);
+          background-position: $retina-offset-x $vert-pos+$retina-offset-y;
+          @include background-size(round(image-width(sprite-path($sprites-retina)) / 2) auto);
+        } 
+
+        //pixel handling function
+        @else { 
+          // @debug pixel widths; 
+          $hor-pos: floor(nth(sprite-position($sprites-retina, $name), 1) / 2);
+          $vert-pos: floor(nth(sprite-position($sprites-retina, $name), 2) / 2);
+          background-position: $hor-pos+$retina-offset-x $vert-pos+$retina-offset-y;
+          @include background-size(round(image-width(sprite-path($sprites-retina)) / 2) auto);
+        }
+      // end if    
       }
-      // end if 
+
+  //end else     
   }
 
   // @media screen and (max-width: 600px) {
   @media (-webkit-min-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 3/2), (min-device-pixel-ratio: 2) {
-  
-    @if $retina-offset-x == 0 { $retina-offset-x: $offset-x; }
-    @if $retina-offset-y == 0 { $retina-offset-y: $offset-y; }
-    // the following lines put debug ouput in the command line compass watcher, just uncomment to enable
-    // @debug "Roffset x =" $retina-offset-x;
-    // @debug "Roffset y =" $retina-offset-y;
+      background-repeat: no-repeat;  
 
-    @if $retina-switch == retina {
-      background-color: lightgreen;
+      @if $retina-offset-x == 0 { $retina-offset-x: $offset-x; }
+      @if $retina-offset-y == 0 { $retina-offset-y: $offset-y; }
+      // the following lines put debug ouput in the command line compass watcher, just uncomment to enable
+      // @debug "Roffset x =" $retina-offset-x;
+      // @debug "Roffset y =" $retina-offset-y;
 
-      background-image: sprite-url($sprites-retina);
-      $hor-pos: floor(nth(sprite-position($sprites-retina, $name), 1) / 2);
-      $vert-pos: floor(nth(sprite-position($sprites-retina, $name), 2) / 2);
-      background-position: $hor-pos+$retina-offset-x $vert-pos+$retina-offset-y;
-      @include background-size(round(image-width(sprite-path($sprites-retina)) / 2) auto);
-    }
-    // end if 
+      $retina-unit: unit($retina-offset-x);
+
+
+      @if $retina-switch == retina {
+        // background-color: darkgreen;
+        background-image: sprite-url($sprites-retina);
+
+        @if $retina-unit == "%" {  
+          // @debug percentage widths;
+          // @debug $retina-offset-x;
+
+          $vert-pos: floor(nth(sprite-position($sprites-retina, $name), 2) / 2);
+          background-position: $retina-offset-x $vert-pos+$retina-offset-y;
+          @include background-size(round(image-width(sprite-path($sprites-retina)) / 2) auto);
+        } 
+
+        //pixel handling function
+        @else { 
+          // @debug pixel widths; 
+          $hor-pos: floor(nth(sprite-position($sprites-retina, $name), 1) / 2);
+          $vert-pos: floor(nth(sprite-position($sprites-retina, $name), 2) / 2);
+          background-position: $hor-pos+$retina-offset-x $vert-pos+$retina-offset-y;
+          @include background-size(round(image-width(sprite-path($sprites-retina)) / 2) auto);
+        }
+      // end if    
+      }
+
 
   // end media query
   }
@@ -97,7 +143,7 @@ $sprites-retina: sprite-map("sprites-retina/*.png", $spacing: $sprite-padding * 
 
 @if $retina-debug-mode  == true {
   html { 
-    border: 3px solid red; 
+    border-bottom: 3px solid red; 
     position: absolute;
     top: 0;
     bottom: 0;
