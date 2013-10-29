@@ -22,6 +22,3 @@ It also has it's own offsets as the sprite sheet can differ slightly due to roun
 
 I will update and improve this readme file, make it clearer, but for now this is the gist of it...
 
-Some things I'd like some help with are individual sprite placement on the sprite sheet. I've managed to get individual sprite spacing working, but not individual sprite placement like this:
-$icons-spotify-position: 100%;
-
