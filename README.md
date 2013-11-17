@@ -14,5 +14,4 @@ This triggers the mixin to go and find icons-retina/spotify.png, and icons/spoti
 
 It also has it's own offsets as the sprite sheet can differ slightly due to rounding when it's size gets halved.
 
-I will update and improve this readme file, make it clearer, but for now this is the gist of it...
-
+Note: if there are no PNG files in the retina folder it will have a compile error. A possible future improvement.
