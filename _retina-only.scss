@@ -1,0 +1,31 @@
+// retina sprite mixin
+
+// default icon sprite spacing
+$sprite-padding: 120px;
+
+// the individual retina spacings - positions in px must be doubled.
+$spritesretina: sprite-map("retina-icons/*.png", $spacing: $sprite-padding * 2,
+  $retina-icons-quotes-orange-spacing: 700px,
+  $retina-icons-exampleVarible-position: 100%); // closing tag must be on last line - go figure?
+
+
+%bg-retina {
+  background-image: sprite-url($spritesretina);
+  @include background-size(round(image-width(sprite-path($spritesretina)) / 2) auto);
+  background-repeat: no-repeat;
+//
+}
+
+@mixin icon ($name, $retina-offset-x: 0, $retina-offset-y: 0 ) {
+  @extend %bg-retina;
+  $retina-unit: unit($retina-offset-x);
+  $vert-pos: round(nth(sprite-position($spritesretina, $name), 2) / 2);
+
+  @if $retina-unit == "%" { background-position: $retina-offset-x $vert-pos+$retina-offset-y; } // percentage horizontal 
+  @else { 
+    $hor-pos: round(nth(sprite-position($spritesretina, $name), 1) / 2);
+    background-position: $hor-pos+$retina-offset-x $vert-pos+$retina-offset-y; // pixel horizontal
+  }
+// end mixin
+}
+
